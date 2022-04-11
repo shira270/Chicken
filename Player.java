@@ -3,11 +3,13 @@
 public class Player {
     private int health;
     
+    
     //current player position
     private int xPos;
     private int yPos;
     public final static int WIDTH = 100;
     public final static int HEIGHT = 100;
+    public final static int SPEED = 15;
 
     private int points;
     public Player(int health, int xPos, int yPos) {
@@ -33,5 +35,11 @@ public class Player {
         return WIDTH;
     }
 
-    
+    public void addxPos(int amount) {
+        this.xPos += amount;
+    }
+
+    public void addyPos(int amount) {
+        this.yPos += amount;
+    }
 }
