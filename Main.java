@@ -1,15 +1,15 @@
-import java.awt.Color;
+
 import java.awt.event.*;  
 
 import javax.swing.*;
 
-import org.w3c.dom.events.MouseEvent;
 public class Main extends JFrame implements KeyListener{
     private static final String TITLE = "Chicken Invaders";
-    private static final int WIND_HEIGHT = 1000;
-    private static final int WIND_WIDTH = 1000;
+    public static final int WIND_HEIGHT = 800;
+    public static final int WIND_WIDTH = 1000;
     private Player player;
-
+    private Enemy[] enemies;
+    private GamePanel gPanel;
     public Main() {
         this.setTitle(TITLE);
         this.setResizable(false);
@@ -20,26 +20,28 @@ public class Main extends JFrame implements KeyListener{
         this.addKeyListener(this);
 
 
-        this.player = new Player(10, 100, 100);
+        this.player = new Player(10, Player.startX_Pos, Player.startY_Pos);
 
-        GamePanel gPanel = new GamePanel(player);
+        this.gPanel = new GamePanel(player);
         
         this.add(gPanel);
+        
         while(true) {
-            gPanel.revalidate();
-            gPanel.repaint();
+            this.enemies = gPanel.getEnemies();
+            this.gPanel.revalidate();
+            this.gPanel.repaint();
         }
+
     }
 
     
     public static void main(String[] args) {
-        Main window = new Main();
+        new Main();
     }
 
 
     @Override
     public void keyTyped(KeyEvent e) {
-        // TODO Auto-generated method stub
         
     }
 
@@ -49,16 +51,66 @@ public class Main extends JFrame implements KeyListener{
         
         switch(e.getKeyChar()) {
             case 'd':
-                this.player.addxPos(Player.SPEED);
+                if(checkOutOfBoundsForX(-1, 1)) {
+                    this.player.addxPos(1);
+                    for(Enemy enemy : enemies) {
+                        if(enemy != null){
+                            enemy.addxPos(-1);
+                        }
+                    }
+                }
+
                 break;
             case 'a':
-                this.player.addxPos(-Player.SPEED);
+                if(checkOutOfBoundsForX(1 , -1)){ 
+                    this.player.addxPos(-1);
+                    for(Enemy enemy : enemies) {
+                        if(enemy != null){
+                            enemy.addxPos(1);
+                        }
+                    }
+                }
                 break;
             case 'w':
-                this.player.addyPos(-Player.SPEED);
+                if(checkOutOfBoundsForY(1, -1)){
+                    this.player.addyPos(-1);
+                    for(Enemy enemy : enemies) {
+                        if(enemy != null){
+                            enemy.addyPos(1);
+                        }
+                    }
+                }
                 break;
             case 's':
-                this.player.addyPos(Player.SPEED);
+                if(checkOutOfBoundsForY(-1, 1)){
+                    this.player.addyPos(1);
+                    for(Enemy enemy : enemies) {
+                        if(enemy != null){
+                            enemy.addyPos(-1);
+                        }
+                    }
+                }
+                break;
+            case 'g':
+                if(this.player.getCooldown() <= 0) {
+                    Egg egg = new Egg(this.player.getxPos() + Player.WIDTH / 2, this.player.getyPos());
+                    this.player.shoot(egg);
+                    this.gPanel.addToList(egg);
+                    this.player.resetCooldown();
+                }
+                else {
+                    new Thread(() -> {
+                        while(this.player.getCooldown() > 0) {
+                            try {
+                                Thread.sleep(1000);
+                                this.player.decreseCooldown();
+                                System.out.println(this.player.getCooldown());
+                            } catch (InterruptedException e1) {
+                                e1.printStackTrace();
+                            }      
+                        }
+                    }).start();
+                }
                 break;
         }
         
@@ -69,5 +121,33 @@ public class Main extends JFrame implements KeyListener{
     public void keyReleased(KeyEvent e) {
         // TODO Auto-generated method stub
         
+    }
+
+    private boolean checkOutOfBoundsForX(int directionEnemy, int directionPlayer) {
+        if(player.getxPos() + Player.SPEED * directionPlayer > WIND_WIDTH || player.getxPos() + Player.SPEED * directionPlayer < 0) {
+            return false;
+        }
+        for (Enemy enemy : enemies) {
+            if(enemy != null){
+                if(enemy.getxPos() + Enemy.SPEED * directionEnemy > WIND_WIDTH || enemy.getxPos() + Enemy.SPEED * directionEnemy < 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean checkOutOfBoundsForY(int directionEnemy, int directionPlayer) {
+        if(player.getyPos() + Player.SPEED * directionPlayer > WIND_HEIGHT || player.getyPos() + Player.SPEED * directionPlayer < 0) {
+            return false;
+        }
+        for (Enemy enemy : enemies) {
+            if(enemy != null){
+                if(enemy.getyPos() + Enemy.SPEED * directionEnemy > WIND_HEIGHT || enemy.getyPos() + Enemy.SPEED * directionEnemy < 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
