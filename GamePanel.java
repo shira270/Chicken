@@ -41,7 +41,7 @@ public class GamePanel extends JPanel{
     private void checkPlayerCollision() {
         for (Enemy enemy : enemies) {
             if(enemy != null){
-                boolean checkX = (player.getxPos() >= enemy.getxPos() && player.getxPos() <= enemy.getyPos() + Enemy.WIDTH) || (player.getxPos() + Player.WIDTH >= enemy.getxPos() && player.getxPos() + Player.WIDTH <= enemy.getxPos() + Enemy.WIDTH);
+                boolean checkX = (player.getxPos() >= enemy.getxPos() && player.getxPos() <= enemy.getxPos() + Enemy.WIDTH) || (player.getxPos() + Player.WIDTH >= enemy.getxPos() && player.getxPos() + Player.WIDTH <= enemy.getxPos() + Enemy.WIDTH);
                 boolean checkY = (player.getyPos() >= enemy.getyPos() && player.getyPos() <= enemy.getyPos() + Enemy.WIDTH) || (player.getyPos() + Player.WIDTH >= enemy.getyPos() && player.getyPos() + Player.WIDTH <= enemy.getyPos() + Enemy.WIDTH);
                 if(checkX && checkY) {
                     this.gameOver();

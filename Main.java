@@ -56,6 +56,7 @@ public class Main extends JFrame implements KeyListener{
                     for(Enemy enemy : enemies) {
                         if(enemy != null){
                             enemy.addxPos(-1);
+                            enemy.addyPos(1);
                         }
                     }
                 }
@@ -67,6 +68,7 @@ public class Main extends JFrame implements KeyListener{
                     for(Enemy enemy : enemies) {
                         if(enemy != null){
                             enemy.addxPos(1);
+                            enemy.addyPos(1);
                         }
                     }
                 }
@@ -86,32 +88,12 @@ public class Main extends JFrame implements KeyListener{
                     this.player.addyPos(1);
                     for(Enemy enemy : enemies) {
                         if(enemy != null){
-                            enemy.addyPos(-1);
+                            enemy.addyPos(1);
                         }
                     }
                 }
                 break;
-            case 'g':
-                if(this.player.getCooldown() <= 0) {
-                    Egg egg = new Egg(this.player.getxPos() + Player.WIDTH / 2, this.player.getyPos());
-                    this.player.shoot(egg);
-                    this.gPanel.addToList(egg);
-                    this.player.resetCooldown();
-                }
-                else {
-                    new Thread(() -> {
-                        while(this.player.getCooldown() > 0) {
-                            try {
-                                Thread.sleep(1000);
-                                this.player.decreseCooldown();
-                                System.out.println(this.player.getCooldown());
-                            } catch (InterruptedException e1) {
-                                e1.printStackTrace();
-                            }      
-                        }
-                    }).start();
-                }
-                break;
+
         }
         
     }
@@ -119,7 +101,14 @@ public class Main extends JFrame implements KeyListener{
 
     @Override
     public void keyReleased(KeyEvent e) {
-        // TODO Auto-generated method stub
+        switch(e.getKeyChar()) {
+            case 'g':
+                Egg egg = new Egg(this.player.getxPos() + Player.WIDTH / 2, this.player.getyPos());
+                this.player.shoot(egg);
+                this.gPanel.addToList(egg);
+                break;
+                
+        }
         
     }
 
