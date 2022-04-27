@@ -10,15 +10,26 @@ public class GamePanel extends JPanel{
     private Player player;
     private Enemy[] enemies;
     private ArrayList<Egg> eggs;
-    private final static int ENEMY_AMOUNT = 3;
+    private ImageIcon spaceship;
+    private ImageIcon chicken;
+    private ImageIcon space;
+    private JLabel text;
+
+    private final static int ENEMY_AMOUNT = 5;
+    private final static int ENEMY_HRT = 3;
     private final static int ENEMY_SPACING = 20;
+
     public GamePanel(Player player) {
+
         this.player = player;
         this.initializeEnemies();
         JPanel gamePanel = new JPanel();
         gamePanel.setBackground(Color.white);
         gamePanel.setBounds(0, 0, 300, 420);
         this.eggs = new ArrayList<>();
+
+        this.spaceship = new ImageIcon("spaceship.jpg");
+        this.chicken = new ImageIcon("R.jpg");
 
     }
 
@@ -60,6 +71,8 @@ public class GamePanel extends JPanel{
     }
 
     private void gameOver() {
+
+
         for (int i = 0; i < this.enemies.length; i++) {
             this.enemies[i] = null;
         }
@@ -69,6 +82,7 @@ public class GamePanel extends JPanel{
 
         if(this.player.getPoints() > Player.maxPoints) {
             Player.maxPoints = this.player.getPoints();
+
         }
     }
 
@@ -85,7 +99,7 @@ public class GamePanel extends JPanel{
                 startY_Pos += Enemy.HEIGHT + ENEMY_SPACING;
                 startX_Pos = 0;
             }
-            enemies[i] = new Enemy(3, startX_Pos, startY_Pos);
+            enemies[i] = new Enemy(ENEMY_HRT, startX_Pos, startY_Pos);
             startX_Pos += 80;
         }
         this.enemies = enemies;
@@ -96,12 +110,13 @@ public class GamePanel extends JPanel{
         checkPlayerCollision();
         checkWin();
         super.paintComponent(g);
-        g.setColor(Color.red);
-        g.fillRect(player.getxPos(), player.getyPos(), Player.WIDTH, Player.HEIGHT);
-        g.setColor(Color.blue);
+        this.space = new ImageIcon("M.jpg");
+        this.space.paintIcon(this , g , 0 , -50);
+
+        this.spaceship.paintIcon(this, g , player.getxPos() , player.getyPos());
         for (Enemy enemy : enemies) {
             if(enemy != null){
-                g.fillRect(enemy.getxPos(), enemy.getyPos(), Enemy.WIDTH, Enemy.HEIGHT);
+                this.chicken.paintIcon(this, g , enemy.getxPos() , enemy.getyPos());
             }
         }
         for (int i = 0; i < this.eggs.size(); i++) {
@@ -118,16 +133,19 @@ public class GamePanel extends JPanel{
                     }
                 }
             }
-            
+
         }
 
 
-        
+
     }
 
+    public JLabel getText() {
+        return text;
+    }
 
+    public void setText(JLabel text) {
+        this.text = text;
+    }
 
-
-   
-    
 }
